@@ -725,6 +725,220 @@
         3: "⚠️ სიმართლე, მაგრამ შეიძლება უხეშად ჟღერდეს. შეეცადეთ უფრო რბილად ჩამოაყალიბოთ."
       },
       // Остальные сцены аналогично
+      let currentScene = parseInt(localStorage.getItem('scene')) || 1;
+let score = parseInt(localStorage.getItem('score')) || 0;
+let visitedScenes = new Set(JSON.parse(localStorage.getItem('visited')) || [1]);
+let sceneAnswered = {};
+
+const correctAnswers = {
+  1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 
+  6: 2, 7: 2, 8: 2, 9: 2
+};
+
+const feedbacks = {
+  1: {
+    1: "❌ თქვენ დაემორჩილეთ მანიპულაციას. დედა გააგრძელებს ამ მეთოდის გამოყენებას.",
+    2: "✅ სწორად! თქვენ შეინარჩუნეთ საზღვრები კონფლიქტის გარეშე.",
+    3: "⚠️ სიმართლე, მაგრამ შეიძლება უხეშად ჟღერდეს. შეეცადეთ უფრო რბილად ჩამოაყალიბოთ."
+  },
+  2: {
+    1: "❌ თქვენ დათანხმდით ზეწოლაზე, რაც გაძლიერებს მანიპულატორის მიდგომას.",
+    2: "✅ თქვენ გამოხატეთ საკუთარი პოზიცია, თუმცა არ დაპირისპირდით.",
+    3: "⚠️ მართალია, მაგრამ ფორმა შეიძლება კონფლიქტური იყოს."
+  },
+  3: {
+    1: "❌ ემოციური შანტაჟის დაკმაყოფილება ზრდის მომავალი მანიპულაციის შანსს.",
+    2: "✅ სწორი პოზიცია: თანაგრძნობა და საზღვრების დაცვა ერთად.",
+    3: "⚠️ სიმართლეა, მაგრამ შესაძლოა ურთიერთობისთვის დამაზიანებელი იყოს."
+  },
+  4: {
+    1: "❌ თქვენ საკუთარ საზღვრებზე უარი თქვით მეგობრობის შიშით.",
+    2: "✅ ეს პასუხი თანაგრძნობასაც გამოხატავს და პასუხისმგებლობასაც ტოვებს მეორეს.",
+    3: "⚠️ მართალია, მაგრამ შესაძლოა კონფლიქტურად ჟღერდეს."
+  },
+  5: {
+    1: "❌ კომპლიმენტის გავლენით დათანხმება მანიპულაციის წარმატებაა.",
+    2: "✅ თქვენ განსაზღვრეთ დახმარების საზღვრები.",
+    3: "⚠️ ფორმა შესაძლოა აღიქმოს უხეშად."
+  },
+  6: {
+    1: "❌ თქვენ შეითავსეთ ზედმეტი ვალდებულება მხოლოდ იმიტომ, რომ უკეთესი ხართ.",
+    2: "✅ დახმარება რჩევით – ეს კარგია, მაგრამ პასუხისმგებლობა რჩება მასზე.",
+    3: "⚠️ სწორი იდეაა, მაგრამ რბილი კომუნიკაცია მნიშვნელოვანია."
+  },
+  7: {
+    1: "❌ ეჭვიანობის გამო ურთიერთობის შეზღუდვა არ არის ჯანსაღი დინამიკა.",
+    2: "✅ სწორად გამოხატეთ თქვენი საზღვრები და თანაგრძნობა.",
+    3: "⚠️ მართალია, მაგრამ შესაძლებელია განაპირობოს კონფლიქტი."
+  },
+  8: {
+    1: "❌ პროფესიონალიზმი არ ნიშნავს საკუთარი კეთილდღეობის უგულებელყოფას.",
+    2: "✅ თქვენ გამოხატეთ ჯანსაღი სამუშაო ხედვა.",
+    3: "⚠️ მართალია, თუმცა შეიძლება კონფრონტაციულად ჟღერდეს."
+  },
+  9: {
+    1: "❌ ჯგუფის წნეხის ქვეშ მორგება საფრთხეს უქმნის ინდივიდუალურობას.",
+    2: "✅ თქვენი განსხვავებული აზრი ფასეულია და უნდა დაფასდეს.",
+    3: "⚠️ სწორი გზავნილია, თუმცა ფორმა შესაძლოა აფრთხობდეს."
+  }
+};
+
+const tips = {
+  1: "გრძნობითი მანიპულაცია ხშირად ემყარება შიშზე ან დანაშაულზე. გამოიყენეთ რბილი, მაგრამ მტკიცე პასუხი.",
+  2: "გუნდური მუშაობა არ ნიშნავს მორჩილებას. მკაფიო კომუნიკაცია დაგეხმარებათ.",
+  3: "ემოციური შანტაჟი – არაჯანსაღი ურთიერთობის ნიშანია. გამოხატეთ თანაგრძნობა, მაგრამ დააწესეთ საზღვრები.",
+  4: "ნამდვილი მეგობრობა არ მოითხოვს წნეხით დახმარებას. შეგიძლიათ უარი თქვათ.",
+  5: "კომპლიმენტები არ უნდა იქცეს ვალდებულებად. შეამოწმეთ რეალური საჭიროება.",
+  6: "პროფესიული ექსპლუატაცია ზიანს აყენებს თვითშეფასებას. გამოხატეთ საზღვრები.",
+  7: "სიყვარული არ ნიშნავს კონტროლს. ურთიერთობაში თავისუფლება აუცილებელია.",
+  8: "ტოქსიკური პროფესიონალიზმი იწვევს გადაღლილობას. თავი დაიცავით.",
+  9: "ჯგუფის წნეხის ქვეშ ყოფნა არ უნდა გაგიჩინოთ სირცხვილის გრძნობა. თქვენი ხმა მნიშვნელოვანია."
+};
+
+function initProgressDots() {
+  const container = document.getElementById('progressDots');
+  container.innerHTML = '';
+  
+  for (let i = 1; i <= 10; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot';
+    if (i === currentScene) dot.classList.add('active');
+    if (visitedScenes.has(i)) dot.classList.add('visited');
+    dot.dataset.scene = i;
+    dot.addEventListener('click', () => goToScene(i));
+    container.appendChild(dot);
+  }
+}
+
+function goToScene(sceneNum) {
+  if (sceneNum < 1 || sceneNum > 10) return;
+  document.querySelector(`#scene${currentScene}`)?.classList.remove('active');
+  document.querySelector(`#scene${sceneNum}`)?.classList.add('active');
+  currentScene = sceneNum;
+  visitedScenes.add(sceneNum);
+  updateProgress();
+  updateProgressDots();
+  saveState();
+}
+
+function updateProgressDots() {
+  document.querySelectorAll('.progress-dot').forEach(dot => {
+    const num = parseInt(dot.dataset.scene);
+    dot.classList.remove('active', 'visited');
+    if (num === currentScene) dot.classList.add('active');
+    else if (visitedScenes.has(num)) dot.classList.add('visited');
+  });
+}
+
+function setupThemeToggle() {
+  const btn = document.getElementById('themeToggle');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const stored = localStorage.getItem('theme');
+  if (stored === 'dark' || (!stored && prefersDark)) {
+    document.body.classList.add('dark-mode');
+    btn.textContent = '☀️';
+  }
+  btn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    btn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+  });
+}
+
+function showTip(sceneNum) {
+  alert(`💡 რჩევა სცენისთვის ${sceneNum}:\n\n${tips[sceneNum] || "რჩევა არ არის დამატებული."}`);
+}
+
+function selectOption(sceneNum, optionNum) {
+  const options = document.querySelectorAll(`#scene${sceneNum} .option`);
+  options.forEach(opt => opt.classList.remove('selected'));
+
+  const clicked = event.currentTarget;
+  clicked.classList.add('selected');
+
+  if (sceneAnswered[sceneNum]) return;
+  sceneAnswered[sceneNum] = true;
+
+  const feedback = document.getElementById(`feedback${sceneNum}`);
+  const feedbackText = document.getElementById(`feedback-text${sceneNum}`);
+  feedback.style.display = 'block';
+
+  const correct = correctAnswers[sceneNum];
+  const correctOpt = options[correct - 1];
+  if (correctOpt) correctOpt.classList.add('correct-answer');
+
+  const fb = feedbacks[sceneNum]?.[optionNum] || "შეფასება არ არის.";
+  feedbackText.textContent = fb;
+
+  if (optionNum === correct) {
+    feedback.className = 'feedback correct';
+    score += 2;
+  } else if (optionNum === 3) {
+    feedback.className = 'feedback correct';
+    score += 1;
+  } else {
+    feedback.className = 'feedback incorrect';
+  }
+
+  document.getElementById('score').textContent = score;
+  saveState();
+}
+
+function updateProgress() {
+  document.getElementById('progress').style.width = `${(currentScene - 1) * 10}%`;
+  document.getElementById('current-scene').textContent = currentScene;
+}
+
+function nextScene(nextNum) {
+  goToScene(nextNum);
+}
+
+function prevScene() {
+  if (currentScene > 1) goToScene(currentScene - 1);
+}
+
+function restartGame() {
+  currentScene = 1;
+  score = 0;
+  visitedScenes = new Set([1]);
+  sceneAnswered = {};
+
+  document.getElementById('progress').style.width = '0%';
+  document.getElementById('current-scene').textContent = '1';
+  document.getElementById('score').textContent = '0';
+
+  document.querySelectorAll('.scene').forEach(scene => {
+    scene.classList.remove('active');
+    const feedback = scene.querySelector('.feedback');
+    if (feedback) {
+      feedback.style.display = 'none';
+      feedback.className = 'feedback';
+    }
+    scene.querySelectorAll('.option').forEach(opt => {
+      opt.classList.remove('selected', 'correct-answer');
+    });
+  });
+
+  document.getElementById('scene1').classList.add('active');
+  document.querySelectorAll('.badge').forEach(b => b.classList.remove('acquired'));
+  updateProgressDots();
+  saveState();
+}
+
+function saveState() {
+  localStorage.setItem('scene', currentScene);
+  localStorage.setItem('score', score);
+  localStorage.setItem('visited', JSON.stringify(Array.from(visitedScenes)));
+}
+
+window.onload = function () {
+  setupThemeToggle();
+  initProgressDots();
+  goToScene(currentScene);
+  document.getElementById('score').textContent = score;
+  document.querySelectorAll('.badge').forEach(b => b.classList.add('acquired'));
+};
+
     };
 
     // Инициализация точек прогресса
