@@ -1,3 +1,4 @@
+Luka S., [02.08.2025 10:46]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -130,5 +131,379 @@
     }
   </script>
 
+</body>
+</html>
+
+Luka S., [02.08.2025 10:52]
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Тренажёр Анти-Манипуляций</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f8ff;
+      padding: 20px;
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .scene {
+      display: none;
+      animation: fadeIn 0.5s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .scene.active {
+      display: block;
+    }
+    h2 {
+      color: #3498db;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    .options {
+      margin: 25px 0;
+    }
+    .option {
+      padding: 12px;
+      margin: 10px 0;
+      background: #ecf0f1;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .option:hover {
+      background: #d6eaf8;
+      transform: translateX(5px);
+    }
+    .selected {
+      background: #3498db;
+      color: white;
+    }
+    .feedback {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
+    }
+    .correct {
+      background: #d5f5e3;
+      border-left: 5px solid #2ecc71;
+    }
+    .incorrect {
+      background: #fadbd8;
+      border-left: 5px solid #e74c3c;
+    }
+    .progress-bar {
+      height: 10px;
+      background: #ecf0f1;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress {
+      height: 100%;
+      background: #3498db;
+      width: 0%;
+      transition: width 0.5s;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 12px 25px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+    }
+    .btn:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    
+    <div class="stats">
+      <div>Сцена: <span id="current-scene">1</span>/5</div>
+      <div>Баллы: <span id="score">0</span></div>
+    </div>
+
+    <!-- Сцена 1 -->
+    <div id="scene1" class="scene active">
+      <h2>Семейный ужин</h2>
+      <p>Мама говорит: "Если ты не приедешь в воскресенье, у меня давление поднимется!" Ваши действия:</p>
+      
+      <div class="options">
+        <div class="option" onclick="selectOption(1, 1)">Срочно пообещать приехать</div>
+        <div class="option" onclick="selectOption(1, 2)">Ответить: "Мама, я тебя люблю, но давай найдем другой день"</div>
+        <div class="option" onclick="selectOption(1, 3)">Сказать: "Это манипуляция, я приеду, когда смогу"</div>
+      </div>
+      
+      <div id="feedback1" class="feedback">
+        <p id="feedback-text1"></p>
+        <button class="btn" onclick="nextScene(2)">Далее</button>
+      </div>
+    </div>
+
+    <!-- Сцена 2 -->
+    <div id="scene2" class="scene">
+      <h2>Рабочая ситуация</h2>
+      <p>Коллега заявляет: "Ты же командный игрок? Значит, останешься после работы!" Как ответите?</p>
+      
+      <div class="options">
+        <div class="option" onclick="selectOption(2, 1)">Молча согласиться</div>
+        <div class="option" onclick="selectOption(2, 2)">"Командность — это про взаимность. Давай обсудим дедлайн"</div>
+        <div class="option" onclick="selectOption(2, 3)">"Это манипуляция, я ухожу вовремя"</div>
+      </div>
+      
+      <div id="feedback2" class="feedback">
+        <p id="feedback-text2"></p>
+        <button class="btn" onclick="nextScene(3)">Далее</button>
+      </div>
+    </div>
+
+    <!-- Сцена 3 -->
+    <div id="scene3" class="scene">
+
+Luka S., [02.08.2025 10:52]
+<h2>Романтические отношения</h2>
+      <p>Партнер говорит: "Если ты действительно меня любишь, то одолжишь 1000 лари". Ваша реакция:</p>
+      
+      <div class="options">
+        <div class="option" onclick="selectOption(3, 1)">Дать деньги, чтобы не обидеть</div>
+        <div class="option" onclick="selectOption(3, 2)">"Любовь не измеряется деньгами. Давай обсудим твою ситуацию"</div>
+        <div class="option" onclick="selectOption(3, 3)">"Это шантаж, я не дам денег"</div>
+      </div>
+      
+      <div id="feedback3" class="feedback">
+        <p id="feedback-text3"></p>
+        <button class="btn" onclick="nextScene(4)">Далее</button>
+      </div>
+    </div>
+
+    <!-- Сцена 4 -->
+    <div id="scene4" class="scene">
+      <h2>Дружеское общение</h2>
+      <p>Друг говорит: "Ты же не хочешь, чтобы я расстроился? Тогда сделай за меня эту работу!" Что сделаете?</p>
+      
+      <div class="options">
+        <div class="option" onclick="selectOption(4, 1)">Взять на себя его обязанности</div>
+        <div class="option" onclick="selectOption(4, 2)">"Я помогу советом, но работу делай сам"</div>
+        <div class="option" onclick="selectOption(4, 3)">"Ты пытаешься мной манипулировать"</div>
+      </div>
+      
+      <div id="feedback4" class="feedback">
+        <p id="feedback-text4"></p>
+        <button class="btn" onclick="nextScene(5)">Далее</button>
+      </div>
+    </div>
+
+    <!-- Сцена 5 -->
+    <div id="scene5" class="scene">
+      <h2>Финал</h2>
+      <p>Поздравляем! Вы набрали <span id="final-score">0</span> из 10 возможных баллов.</p>
+      <div id="final-feedback"></div>
+      <button class="btn" onclick="restartGame()">Начать заново</button>
+    </div>
+  </div>
+
+  <script>
+    let currentScene = 1;
+    let score = 0;
+    const correctAnswers = {
+      1: 2,  // Для сцены 1 правильный ответ 2
+      2: 2,
+      3: 2,
+      4: 2
+    };
+    const feedbacks = {
+      1: {
+        1: "❌ Вы поддались манипуляции через чувство вины. Мама продолжит использовать этот прием.",
+        2: "✅ Верно! Вы сохранили границы, предложив альтернативу без конфликта.",
+        3: "⚠️ Правдиво, но может вызвать конфликт. Можно смягчить формулировку."
+      },
+      2: {
+        1: "❌ Вы поощрили манипулятивное поведение коллеги.",
+        2: "✅ Идеально! Показали, что командная работа — улица с двусторонним движением.",
+        3: "⚠️ Точно, но слишком резко. Можно добавить предложение обсудить проблему."
+      },
+      3: {
+        1: "❌ Это классический шантаж под видом проверки чувств.",
+        2: "✅ Отлично! Разделили чувства и материальные вопросы.",
+        3: "⚠️ Верно по сути, но может спровоцировать ссору."
+      },
+      4: {
+        1: "❌ Друг будет продолжать перекладывать на вас свои обязанности.",
+        2: "✅ Правильно! Поддержали, но не взяли на себя его работу.",
+        3: "⚠️ Точно, но можно выразиться мягче, сохраняя суть."
+      }
+    };
+
+    function selectOption(sceneNum, optionNum) {
+      // Снимаем выделение со всех вариантов
+      document.querySelectorAll(`#scene${sceneNum} .option`).forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      
+      // Выделяем выбранный вариант
+      event.target.classList.add('selected');
+      
+      // Показываем обратную связь
+      const feedbackDiv = document.getElementById(`feedback${sceneNum}`);
+      const feedbackText = document.getElementById(`feedback-text${sceneNum}`);
+      
+      feedbackDiv.style.display = 'block';
+      feedbackText.textContent = feedbacks[sceneNum][optionNum];
+      
+      // Добавляем класс в зависимости от правильности ответа
+      if (optionNum === correctAnswers[sceneNum]) {
+        feedbackDiv.className = 'feedback correct';
+        score += 2; // 2 балла за идеальный ответ
+      } else if (
+        (sceneNum === 1 && optionNum === 3) ||
+        (sceneNum === 2 && optionNum === 3) ||
+        (sceneNum === 3 && optionNum === 3) ||
+        (sceneNum === 4 && optionNum === 3)
+      ) {
+        feedbackDiv.className = 'feedback correct';
+        score += 1; // 1 балл за частично правильный ответ
+      } else {
+
+Luka S., [02.08.2025 10:52]
+feedbackDiv.className = 'feedback incorrect';
+      }
+    }
+
+    function nextScene(nextNum) {
+      document.getElementById(`scene${currentScene}`).classList.remove('active');
+      document.getElementById(`scene${nextNum}`).classList.add('active');
+      currentScene = nextNum;
+      
+      // Обновляем прогресс-бар
+      document.getElementById('progress').style.width = ${(nextNum-1)*25}%;
+      document.getElementById('current-scene').textContent = nextNum-1;
+      document.getElementById('score').textContent = score;
+      
+      // Если это последняя сцена, показываем итоги
+      if (nextNum === 5) {
+        document.getElementById('final-score').textContent = score;
+        let finalFeedback = '';
+        if (score >= 8) {
+          finalFeedback = '<p>🎉 Отлично! Вы уверенно распознаете манипуляции и знаете, как им противостоять.</p>';
+        } else if (score >= 5) {
+          finalFeedback = '<p>👍 Хорошо! Вы понимаете манипуляции, но иногда реагируете слишком резко или мягко.</p>';
+        } else {
+          finalFeedback = '<p>💡 Есть куда расти! Обратите внимание на техники ассертивного общения.</p>';
+        }
+        document.getElementById('final-feedback').innerHTML = finalFeedback;
+      }
+    }
+
+    function restartGame() {
+      currentScene = 1;
+      score = 0;
+      document.getElementById('progress').style.width = '0%';
+      document.getElementById('current-scene').textContent = '1';
+      document.getElementById('score').textContent = '0';
+      
+      // Сбрасываем все сцены
+      document.querySelectorAll('.scene').forEach(scene => {
+        scene.classList.remove('active');
+        const feedback = scene.querySelector('.feedback');
+        if (feedback) {
+          feedback.style.display = 'none';
+          feedback.className = 'feedback';
+        }
+        scene.querySelectorAll('.option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+      });
+      
+      document.getElementById('scene1').classList.add('active');
+    }
+  </script>
+</body>
+</html>
+
+Luka S., [02.08.2025 10:52]
+feedbackDiv.className = 'feedback incorrect';
+      }
+    }
+
+    function nextScene(nextNum) {
+      document.getElementById(scene${currentScene}).classList.remove('active');
+      document.getElementById(scene${nextNum}).classList.add('active');
+      currentScene = nextNum;
+      
+      // Обновляем прогресс-бар
+      document.getElementById('progress').style.width = ${(nextNum-1)*25}%;
+      document.getElementById('current-scene').textContent = nextNum-1;
+      document.getElementById('score').textContent = score;
+      
+      // Если это последняя сцена, показываем итоги
+      if (nextNum === 5) {
+        document.getElementById('final-score').textContent = score;
+        let finalFeedback = '';
+        if (score >= 8) {
+          finalFeedback = '<p>🎉 Отлично! Вы уверенно распознаете манипуляции и знаете, как им противостоять.</p>';
+        } else if (score >= 5) {
+          finalFeedback = '<p>👍 Хорошо! Вы понимаете манипуляции, но иногда реагируете слишком резко или мягко.</p>';
+        } else {
+          finalFeedback = '<p>💡 Есть куда расти! Обратите внимание на техники ассертивного общения.</p>';
+        }
+        document.getElementById('final-feedback').innerHTML = finalFeedback;
+      }
+    }
+
+    function restartGame() {
+      currentScene = 1;
+      score = 0;
+      document.getElementById('progress').style.width = '0%';
+      document.getElementById('current-scene').textContent = '1';
+      document.getElementById('score').textContent = '0';
+      
+      // Сбрасываем все сцены
+      document.querySelectorAll('.scene').forEach(scene => {
+        scene.classList.remove('active');
+        const feedback = scene.querySelector('.feedback');
+        if (feedback) {
+          feedback.style.display = 'none';
+          feedback.className = 'feedback';
+        }
+        scene.querySelectorAll('.option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+      });
+      
+      document.getElementById('scene1').classList.add('active');
+    }
+  </script>
 </body>
 </html>
