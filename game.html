@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Анти-Манипуляция: Игра</title>
+  <meta charset="UTF-8" />
+  <title>Анти-манипуляция</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #f8f8f8;
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
       padding: 20px;
-      color: #333;
     }
     .scene {
       display: none;
-      max-width: 600px;
-      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px #ccc;
+      margin-bottom: 20px;
     }
     .scene.active {
       display: block;
     }
     button {
-      padding: 10px 20px;
-      margin-top: 20px;
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
       font-size: 16px;
-      background: #4CAF50;
-      color: white;
+      width: 100%;
       border: none;
       border-radius: 5px;
+      background-color: #1976d2;
+      color: white;
       cursor: pointer;
     }
     button:hover {
-      background: #45a049;
+      background-color: #135ba1;
     }
   </style>
 </head>
@@ -38,40 +41,92 @@
 
   <div id="scene1" class="scene active">
     <h2>Сцена 1</h2>
-    <p>Вы знакомитесь с человеком, который постоянно давит на чувство вины. Что вы сделаете?</p>
-    <button onclick="nextScene(2)">Далее</button>
+    <p>Тебе пишут: «Если ты сейчас не ответишь — значит, ты меня игнорируешь специально».</p>
+    <button onclick="goToScene('1a')">😐 Объяснить, что ты занят</button>
+    <button onclick="goToScene('1b')">😔 Извиниться и срочно ответить</button>
+  </div>
+
+  <div id="scene1a" class="scene">
+    <p>Ты сохраняешь границы и объясняешь ситуацию. Молодец!</p>
+    <button onclick="goToScene('scene2')">Далее</button>
+  </div>
+
+  <div id="scene1b" class="scene">
+    <p>Ты пошёл на поводу, но почувствовал раздражение. Это первый признак манипуляции.</p>
+    <button onclick="goToScene('scene2')">Далее</button>
   </div>
 
   <div id="scene2" class="scene">
     <h2>Сцена 2</h2>
-    <p>Он говорит: "Если ты меня любишь, ты сделаешь это". Какова будет ваша реакция?</p>
-    <button onclick="nextScene(3)">Далее</button>
+    <p>На встрече тебе говорят: «Ты ведь всегда соглашаешься, так что и сейчас давай». Что ты ответишь?</p>
+    <button onclick="goToScene('2a')">✋ В этот раз я подумаю</button>
+    <button onclick="goToScene('2b')">😓 Ну ладно, как скажете...</button>
+  </div>
+
+  <div id="scene2a" class="scene">
+    <p>Ты вышел из шаблона поведения — это шаг к свободе!</p>
+    <button onclick="goToScene('scene3')">Далее</button>
+  </div>
+
+  <div id="scene2b" class="scene">
+    <p>Ты снова прогнулся. Почему? Разберись, что мешает тебе сказать «нет».</p>
+    <button onclick="goToScene('scene3')">Далее</button>
   </div>
 
   <div id="scene3" class="scene">
     <h2>Сцена 3</h2>
-    <p>Вы замечаете, что начинаете сомневаться в себе. Что может помочь вернуть уверенность?</p>
-    <button onclick="nextScene(4)">Далее</button>
+    <p>Партнёр говорит: «Ты должен доказывать свою любовь действиями».</p>
+    <button onclick="goToScene('3a')">❤️ Любовь — не про "должен"</button>
+    <button onclick="goToScene('3b')">😥 Постараться что-то сделать</button>
+  </div>
+
+  <div id="scene3a" class="scene">
+    <p>Ты не поддался эмоциональному шантажу. Супер!</p>
+    <button onclick="goToScene('scene4')">Далее</button>
+  </div>
+
+  <div id="scene3b" class="scene">
+    <p>Ты повёлся на шантаж. Это ловушка, в которую легко попасть.</p>
+    <button onclick="goToScene('scene4')">Далее</button>
   </div>
 
   <div id="scene4" class="scene">
     <h2>Сцена 4</h2>
-    <p>Вы учитесь распознавать манипуляции и называть чувства. Это помогает?</p>
-    <button onclick="nextScene(5)">Далее</button>
+    <p>Коллега говорит: «Ты сам согласился помочь, чего теперь отказываешься?»</p>
+    <button onclick="goToScene('4a')">📌 Да, но сейчас у меня нет ресурса</button>
+    <button onclick="goToScene('4b')">🙃 Ладно, закончу как-нибудь</button>
+  </div>
+
+  <div id="scene4a" class="scene">
+    <p>Ты умеешь признавать изменения. Это зрелая позиция.</p>
+    <button onclick="goToScene('scene5')">Далее</button>
+  </div>
+
+  <div id="scene4b" class="scene">
+    <p>Ты снова наступил себе на горло. Это путь к выгоранию.</p>
+    <button onclick="goToScene('scene5')">Далее</button>
   </div>
 
   <div id="scene5" class="scene">
-    <h2>Финал</h2>
-    <p>Поздравляем! Вы прошли игру и научились сопротивляться манипуляциям. 🎉</p>
-    <button onclick="location.href='index.html'">Назад в меню</button>
+    <h2>Сцена 5 — Финал</h2>
+    <p>Ты прошёл 5 ситуаций. Ты:</p>
+    <ul>
+      <li>✔ Учишься видеть манипуляции</li>
+      <li>✔ Начинаешь говорить "нет"</li>
+      <li>✔ Защищаешь свои границы</li>
+    </ul>
+    <p>⚡ Помни: быть собой — не эгоизм. Это зрелость.</p>
+    <button onclick="restart()">🔄 Пройти снова</button>
   </div>
 
   <script>
-    function nextScene(num) {
-      const current = document.querySelector('.scene.active');
-      const next = document.getElementById('scene' + num);
-      if (current) current.classList.remove('active');
-      if (next) next.classList.add('active');
+    function goToScene(id) {
+      document.querySelectorAll('.scene').forEach(scene => scene.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function restart() {
+      goToScene('scene1');
     }
   </script>
 
