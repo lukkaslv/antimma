@@ -1,142 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Анти-манипуляция</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f1f1f1;
-      padding: 20px;
-    }
-    .scene {
-      display: none;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 10px #ccc;
-      margin-bottom: 20px;
-    }
-    .scene.active {
-      display: block;
-    }
-    button {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 16px;
-      width: 100%;
-      border: none;
-      border-radius: 5px;
-      background-color: #1976d2;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #135ba1;
-    }
-  </style>
-</head>
-<body>
-
-  <div id="scene1" class="scene active">
-    <h2>Сцена 1</h2>
-    <p>Тебе пишут: «Если ты сейчас не ответишь — значит, ты меня игнорируешь специально».</p>
-    <button onclick="goToScene('1a')">😐 Объяснить, что ты занят</button>
-    <button onclick="goToScene('1b')">😔 Извиниться и срочно ответить</button>
-  </div>
-
-  <div id="scene1a" class="scene">
-    <p>Ты сохраняешь границы и объясняешь ситуацию. Молодец!</p>
-    <button onclick="goToScene('scene2')">Далее</button>
-  </div>
-
-  <div id="scene1b" class="scene">
-    <p>Ты пошёл на поводу, но почувствовал раздражение. Это первый признак манипуляции.</p>
-    <button onclick="goToScene('scene2')">Далее</button>
-  </div>
-
-  <div id="scene2" class="scene">
-    <h2>Сцена 2</h2>
-    <p>На встрече тебе говорят: «Ты ведь всегда соглашаешься, так что и сейчас давай». Что ты ответишь?</p>
-    <button onclick="goToScene('2a')">✋ В этот раз я подумаю</button>
-    <button onclick="goToScene('2b')">😓 Ну ладно, как скажете...</button>
-  </div>
-
-  <div id="scene2a" class="scene">
-    <p>Ты вышел из шаблона поведения — это шаг к свободе!</p>
-    <button onclick="goToScene('scene3')">Далее</button>
-  </div>
-
-  <div id="scene2b" class="scene">
-    <p>Ты снова прогнулся. Почему? Разберись, что мешает тебе сказать «нет».</p>
-    <button onclick="goToScene('scene3')">Далее</button>
-  </div>
-
-  <div id="scene3" class="scene">
-    <h2>Сцена 3</h2>
-    <p>Партнёр говорит: «Ты должен доказывать свою любовь действиями».</p>
-    <button onclick="goToScene('3a')">❤️ Любовь — не про "должен"</button>
-    <button onclick="goToScene('3b')">😥 Постараться что-то сделать</button>
-  </div>
-
-  <div id="scene3a" class="scene">
-    <p>Ты не поддался эмоциональному шантажу. Супер!</p>
-    <button onclick="goToScene('scene4')">Далее</button>
-  </div>
-
-  <div id="scene3b" class="scene">
-    <p>Ты повёлся на шантаж. Это ловушка, в которую легко попасть.</p>
-    <button onclick="goToScene('scene4')">Далее</button>
-  </div>
-
-  <div id="scene4" class="scene">
-    <h2>Сцена 4</h2>
-    <p>Коллега говорит: «Ты сам согласился помочь, чего теперь отказываешься?»</p>
-    <button onclick="goToScene('4a')">📌 Да, но сейчас у меня нет ресурса</button>
-    <button onclick="goToScene('4b')">🙃 Ладно, закончу как-нибудь</button>
-  </div>
-
-  <div id="scene4a" class="scene">
-    <p>Ты умеешь признавать изменения. Это зрелая позиция.</p>
-    <button onclick="goToScene('scene5')">Далее</button>
-  </div>
-
-  <div id="scene4b" class="scene">
-    <p>Ты снова наступил себе на горло. Это путь к выгоранию.</p>
-    <button onclick="goToScene('scene5')">Далее</button>
-  </div>
-
-  <div id="scene5" class="scene">
-    <h2>Сцена 5 — Финал</h2>
-    <p>Ты прошёл 5 ситуаций. Ты:</p>
-    <ul>
-      <li>✔ Учишься видеть манипуляции</li>
-      <li>✔ Начинаешь говорить "нет"</li>
-      <li>✔ Защищаешь свои границы</li>
-    </ul>
-    <p>⚡ Помни: быть собой — не эгоизм. Это зрелость.</p>
-    <button onclick="restart()">🔄 Пройти снова</button>
-  </div>
-
-  <script>
-    function goToScene(id) {
-      document.querySelectorAll('.scene').forEach(scene => scene.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-
-    function restart() {
-      goToScene('scene1');
-    }
-  </script>
-
-</body>
-</html>
-
-Luka S., [02.08.2025 10:52]
-<!DOCTYPE html>
-<html lang="ru">
-<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Тренажёр Анти-Манипуляций</title>
@@ -290,9 +154,7 @@ Luka S., [02.08.2025 10:52]
 
     <!-- Сцена 3 -->
     <div id="scene3" class="scene">
-
-Luka S., [02.08.2025 10:52]
-<h2>Романтические отношения</h2>
+      <h2>Романтические отношения</h2>
       <p>Партнер говорит: "Если ты действительно меня любишь, то одолжишь 1000 лари". Ваша реакция:</p>
       
       <div class="options">
@@ -394,9 +256,7 @@ Luka S., [02.08.2025 10:52]
         feedbackDiv.className = 'feedback correct';
         score += 1; // 1 балл за частично правильный ответ
       } else {
-
-Luka S., [02.08.2025 10:52]
-feedbackDiv.className = 'feedback incorrect';
+        feedbackDiv.className = 'feedback incorrect';
       }
     }
 
@@ -406,63 +266,7 @@ feedbackDiv.className = 'feedback incorrect';
       currentScene = nextNum;
       
       // Обновляем прогресс-бар
-      document.getElementById('progress').style.width = ${(nextNum-1)*25}%;
-      document.getElementById('current-scene').textContent = nextNum-1;
-      document.getElementById('score').textContent = score;
-      
-      // Если это последняя сцена, показываем итоги
-      if (nextNum === 5) {
-        document.getElementById('final-score').textContent = score;
-        let finalFeedback = '';
-        if (score >= 8) {
-          finalFeedback = '<p>🎉 Отлично! Вы уверенно распознаете манипуляции и знаете, как им противостоять.</p>';
-        } else if (score >= 5) {
-          finalFeedback = '<p>👍 Хорошо! Вы понимаете манипуляции, но иногда реагируете слишком резко или мягко.</p>';
-        } else {
-          finalFeedback = '<p>💡 Есть куда расти! Обратите внимание на техники ассертивного общения.</p>';
-        }
-        document.getElementById('final-feedback').innerHTML = finalFeedback;
-      }
-    }
-
-    function restartGame() {
-      currentScene = 1;
-      score = 0;
-      document.getElementById('progress').style.width = '0%';
-      document.getElementById('current-scene').textContent = '1';
-      document.getElementById('score').textContent = '0';
-      
-      // Сбрасываем все сцены
-      document.querySelectorAll('.scene').forEach(scene => {
-        scene.classList.remove('active');
-        const feedback = scene.querySelector('.feedback');
-        if (feedback) {
-          feedback.style.display = 'none';
-          feedback.className = 'feedback';
-        }
-        scene.querySelectorAll('.option').forEach(opt => {
-          opt.classList.remove('selected');
-        });
-      });
-      
-      document.getElementById('scene1').classList.add('active');
-    }
-  </script>
-</body>
-</html>
-
-Luka S., [02.08.2025 10:52]
-feedbackDiv.className = 'feedback incorrect';
-      }
-    }
-
-    function nextScene(nextNum) {
-      document.getElementById(scene${currentScene}).classList.remove('active');
-      document.getElementById(scene${nextNum}).classList.add('active');
-      currentScene = nextNum;
-      
-      // Обновляем прогресс-бар
-      document.getElementById('progress').style.width = ${(nextNum-1)*25}%;
+      document.getElementById('progress').style.width = `${(nextNum-1)*25}%`;
       document.getElementById('current-scene').textContent = nextNum-1;
       document.getElementById('score').textContent = score;
       
