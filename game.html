@@ -7,45 +7,58 @@
   <style>
     body {
       font-family: sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background: #f7f7f7;
+      padding: 20px;
       text-align: center;
     }
-    .menu {
-      background: white;
-      padding: 30px;
+    .scene {
+      background: #fff;
+      padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    h1 {
-      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: auto;
     }
     button {
-      display: block;
-      margin: 10px auto;
-      padding: 12px 20px;
-      font-size: 16px;
+      margin: 10px;
+      padding: 10px 20px;
       border: none;
       border-radius: 8px;
       background-color: #007aff;
       color: white;
+      font-size: 16px;
       cursor: pointer;
-      width: 80%;
     }
     button:hover {
-      background-color: #005bb5;
+      background-color: #005dc1;
     }
   </style>
 </head>
 <body>
-  <div class="menu">
-    <h1>🛡 Анти-манипуляция</h1>
-    <button onclick="location.href='game.html'">🎮 Играть</button>
-    <button onclick="alert('Автор: Лука Сулава\nПсихолог-консультант, работающий с темами границ, травм и манипуляций')">👤 Об авторе</button>
-    <button onclick="alert('Можете прислать свои предложения в Telegram: @твоя_ссылка')">💡 Ваши предложения</button>
+  <div class="scene">
+    <h2>СЦЕНА 1</h2>
+    <p>Тебе пишет бывший:<br>
+    "Ты же говорила, что я тебе не безразличен. Почему теперь игнорируешь?"</p>
+    <div id="choices">
+      <button onclick="choose(1)">😢 Извини, я не хотела обидеть</button><br>
+      <button onclick="choose(2)">🧘 Я выбираю заботу о себе</button><br>
+      <button onclick="choose(3)">❌ Ты снова вызываешь вину</button>
+    </div>
+    <div id="result" style="margin-top:20px;"></div>
   </div>
+
+  <script>
+    function choose(option) {
+      const result = document.getElementById("result");
+      if (option === 1) {
+        result.innerHTML = "<p>❗️Ты поддался манипуляции через чувство вины.</p>";
+      } else if (option === 2) {
+        result.innerHTML = "<p>✅ Ты сохранил границы с уважением.</p>";
+      } else if (option === 3) {
+        result.innerHTML = "<p>🧠 Отлично! Ты узнал манипуляцию и не вовлёкся.</p>";
+      }
+      document.getElementById("choices").style.display = "none";
+    }
+  </script>
 </body>
 </html>
