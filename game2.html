@@ -710,22 +710,8 @@
   </div>
 
   <script>
-    let currentScene = 1;
-    let score = 0;
-    let visitedScenes = new Set([1]);
-    const correctAnswers = {
-      1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 
-      6: 2, 7: 2, 8: 2, 9: 2
-    };
-    
-    const feedbacks = {
-      1: {
-        1: "❌ თქვენ დაემორჩილეთ მანიპულაციას. დედა გააგრძელებს ამ მეთოდის გამოყენებას.",
-        2: "✅ სწორად! თქვენ შეინარჩუნეთ საზღვრები კონფლიქტის გარეშე.",
-        3: "⚠️ სიმართლე, მაგრამ შეიძლება უხეშად ჟღერდეს. შეეცადეთ უფრო რბილად ჩამოაყალიბოთ."
-      },
-      // Остальные сцены аналогично
-      let currentScene = parseInt(localStorage.getItem('scene')) || 1;
+
+let currentScene = parseInt(localStorage.getItem('scene')) || 1;
 let score = parseInt(localStorage.getItem('score')) || 0;
 let visitedScenes = new Set(JSON.parse(localStorage.getItem('visited')) || [1]);
 let sceneAnswered = {};
