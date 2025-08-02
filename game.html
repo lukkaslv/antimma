@@ -1,64 +1,79 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Анти-манипуляция</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Анти-Манипуляция: Игра</title>
   <style>
     body {
       font-family: sans-serif;
-      background: #f7f7f7;
+      background: #f8f8f8;
       padding: 20px;
-      text-align: center;
+      color: #333;
     }
     .scene {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      max-width: 500px;
-      margin: auto;
+      display: none;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .scene.active {
+      display: block;
     }
     button {
-      margin: 10px;
       padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background-color: #007aff;
-      color: white;
+      margin-top: 20px;
       font-size: 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #005dc1;
+      background: #45a049;
     }
   </style>
 </head>
 <body>
-  <div class="scene">
-    <h2>СЦЕНА 1</h2>
-    <p>Тебе пишет бывший:<br>
-    "Ты же говорила, что я тебе не безразличен. Почему теперь игнорируешь?"</p>
-    <div id="choices">
-      <button onclick="choose(1)">😢 Извини, я не хотела обидеть</button><br>
-      <button onclick="choose(2)">🧘 Я выбираю заботу о себе</button><br>
-      <button onclick="choose(3)">❌ Ты снова вызываешь вину</button>
-    </div>
-    <div id="result" style="margin-top:20px;"></div>
+
+  <div id="scene1" class="scene active">
+    <h2>Сцена 1</h2>
+    <p>Вы знакомитесь с человеком, который постоянно давит на чувство вины. Что вы сделаете?</p>
+    <button onclick="nextScene(2)">Далее</button>
+  </div>
+
+  <div id="scene2" class="scene">
+    <h2>Сцена 2</h2>
+    <p>Он говорит: "Если ты меня любишь, ты сделаешь это". Какова будет ваша реакция?</p>
+    <button onclick="nextScene(3)">Далее</button>
+  </div>
+
+  <div id="scene3" class="scene">
+    <h2>Сцена 3</h2>
+    <p>Вы замечаете, что начинаете сомневаться в себе. Что может помочь вернуть уверенность?</p>
+    <button onclick="nextScene(4)">Далее</button>
+  </div>
+
+  <div id="scene4" class="scene">
+    <h2>Сцена 4</h2>
+    <p>Вы учитесь распознавать манипуляции и называть чувства. Это помогает?</p>
+    <button onclick="nextScene(5)">Далее</button>
+  </div>
+
+  <div id="scene5" class="scene">
+    <h2>Финал</h2>
+    <p>Поздравляем! Вы прошли игру и научились сопротивляться манипуляциям. 🎉</p>
+    <button onclick="location.href='index.html'">Назад в меню</button>
   </div>
 
   <script>
-    function choose(option) {
-      const result = document.getElementById("result");
-      if (option === 1) {
-        result.innerHTML = "<p>❗️Ты поддался манипуляции через чувство вины.</p>";
-      } else if (option === 2) {
-        result.innerHTML = "<p>✅ Ты сохранил границы с уважением.</p>";
-      } else if (option === 3) {
-        result.innerHTML = "<p>🧠 Отлично! Ты узнал манипуляцию и не вовлёкся.</p>";
-      }
-      document.getElementById("choices").style.display = "none";
+    function nextScene(num) {
+      const current = document.querySelector('.scene.active');
+      const next = document.getElementById('scene' + num);
+      if (current) current.classList.remove('active');
+      if (next) next.classList.add('active');
     }
   </script>
+
 </body>
 </html>
