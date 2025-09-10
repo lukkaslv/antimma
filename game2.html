@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>მანიპულაციების წინააღმდეგ ტრენაჟორი</title>
+<title>მანიპულაციების წინააღმდეგ ინტერაქტიული ტრენაჟორი</title>
 <style>
 body { font-family:sans-serif; background:#f0f8ff; padding:20px; color:#2c3e50; }
 .container { max-width:600px; margin:0 auto; background:white; padding:20px; border-radius:15px; }
@@ -11,8 +11,8 @@ body { font-family:sans-serif; background:#f0f8ff; padding:20px; color:#2c3e50; 
 .option:hover { background:#d6eaf8; }
 .selected { background:#3498db; color:white; }
 .feedback { margin-top:15px; padding:10px; border-radius:8px; display:none; }
-.correct { background:#d5f5e3; border-left:5px solid #2ecc71; }
-.incorrect { background:#fadbd8; border-left:5px solid #e74c3c; }
+.confident { color:green; font-weight:bold; }
+.unconfident { color:red; font-weight:bold; }
 .progress-bar { height:10px; background:#ecf0f1; border-radius:5px; margin-bottom:15px; overflow:hidden; }
 .progress { height:100%; background:#3498db; width:0%; transition:width 0.5s; }
 </style>
@@ -20,8 +20,7 @@ body { font-family:sans-serif; background:#f0f8ff; padding:20px; color:#2c3e50; 
 <body>
 <div class="container">
   <div class="progress-bar"><div class="progress" id="progress"></div></div>
-  <div>სცენა: <span id="current-scene">1</span>/<span id="total-scenes">0</span></div>
-  <div>ქულა: <span id="score">0</span></div>
+  <div>Очки уверенности: <span id="confidence">5</span>/10</div>
   <h2 id="scene-title"></h2>
   <p id="scene-text"></p>
   <div id="options" class="options"></div>
@@ -30,40 +29,77 @@ body { font-family:sans-serif; background:#f0f8ff; padding:20px; color:#2c3e50; 
 </div>
 
 <script>
-const scenes = [
-  {
-    title: "ოჯახური ვახშამი",
-    text: "დედა გეუბნება: 'თუ კვირას არ მოხვალ, წნევა მეწვება!' რას გააკეთებ?",
+let confidence = 5; // изначальные очки уверенности
+let currentSceneKey = 'start';
+
+const scenes = {
+  start: {
+    text: "Друзья зовут тебя на вечеринку, но у тебя планы. Что сделаешь?",
     options: [
-      {text:"დაუყოვნებლივ დაპირდები", score:0, feedback:"❌ მანიპულაცია გაიგრძელება."},
-      {text:"პასუხობ: 'დედა, მიყვარხარ, მაგრამ სხვა დღეს შევხვდეთ'", score:2, feedback:"✅ სწორად! საზღვრები შენარჩუნებულია."},
-      {text:"ეუბნები: 'ეს მანიპულაციაა, მოვალ როცა შემეძლება'", score:1, feedback:"⚠️ სიმართლეა, მაგრამ შესაძლოა უხეში ჟღერდეს."}
+      { text: "Пойду на вечеринку", next: "regret", change: -1, feedback: "❌ Вы потеряли немного уверенности." },
+      { text: "Откажусь вежливо", next: "confident", change: +2, feedback: "✅ Отлично! Вы сохранили свои границы." }
     ]
   },
-  {
-    title: "სამუშაო სიტუაცია",
-    text: "კოლეგა ამბობს: 'შენ გუნდური მოთამაშე ხარ? მაშინ სამუშაოს შემდეგ დარჩები!' რას უპასუხებ?",
+  regret: {
+    text: "Вы чувствуете усталость и раздражение. Следующая ситуация:",
     options: [
-      {text:"მშვიდად დათანხმდები", score:0, feedback:"❌ ხელი შეუწყობთ მანიპულაციას."},
-      {text:"გუნდურობა ორმხრივი უნდა იყოს. მოდი განვიხილოთ ვადები", score:2, feedback:"✅ შესანიშნავი! გამოხატეთ თანამშრომლობა."},
-      {text:"ეს მანიპულაციაა, დროზე დავდივარ", score:1, feedback:"⚠️ სწორი, მაგრამ შეიძლება უფრო კონსტრუქციულად."}
+      { text: "Согласиться на просьбу коллеги", next: "overworked", change: -1, feedback: "❌ Вы позволили давлению влиять на себя." },
+      { text: "Вежливо отказаться", next: "confident2", change: +1, feedback: "✅ Хорошо! Вы защищаете своё время." }
     ]
+  },
+  confident: {
+    text: "Вы уверенно сохранили свои границы. Следующая ситуация:",
+    options: [
+      { text: "Игнорировать просьбу друга", next: "conflict", change: -1, feedback: "⚠️ Игнорирование может вызвать недовольство." },
+      { text: "Предложить альтернативу", next: "confident2", change: +2, feedback: "✅ Отлично! Вы действуете ассертивно." }
+    ]
+  },
+  overworked: {
+    text: "Вы перегружены работой, но коллега снова просит помощи.",
+    options: [
+      { text: "Согласиться", next: "end", change: -2, feedback: "❌ Вы слишком уступчивы." },
+      { text: "Отказать и предложить помощь позже", next: "end", change: +2, feedback: "✅ Вы нашли баланс." }
+    ]
+  },
+  confident2: {
+    text: "Следующая ситуация: партнер требует деньги под предлогом 'любви'.",
+    options: [
+      { text: "Отдать деньги", next: "end", change: -2, feedback: "❌ Манипуляция сработала." },
+      { text: "Обсудить ситуацию", next: "end", change: +2, feedback: "✅ Отлично! Вы различаете манипуляцию и искренние просьбы." }
+    ]
+  },
+  conflict: {
+    text: "Друг расстроен из-за отказа.",
+    options: [
+      { text: "Извиниться и уступить", next: "end", change: -1, feedback: "❌ Вы снова уступили давлению." },
+      { text: "Объяснить свою позицию спокойно", next: "end", change: +2, feedback: "✅ Отлично! Вы сохраняете границы и дружбу." }
+    ]
+  },
+  end: {
+    text: "Игра завершена! Посмотрим, как вы справились:",
+    options: []
   }
-  // можно добавить остальные сцены сюда
-];
-
-let current = 0;
-let score = 0;
-
-document.getElementById("total-scenes").textContent = scenes.length;
+};
 
 function showScene() {
-  const scene = scenes[current];
-  document.getElementById("scene-title").textContent = scene.title;
+  const scene = scenes[currentSceneKey];
+  document.getElementById("scene-title").textContent = currentSceneKey === 'end' ? "Конец" : "Ситуация";
   document.getElementById("scene-text").textContent = scene.text;
   
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
+  
+  if(scene.options.length === 0){
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("next-btn").style.display = "none";
+    document.getElementById("confidence").textContent = confidence;
+    const msg = document.createElement("div");
+    msg.innerHTML = confidence >= 7 ? "<span class='confident'>💪 Отлично! Вы уверенно защищали свои границы.</span>" :
+                 confidence >= 4 ? "<span class='confident'>👍 Хорошо! Но можно улучшить навыки ассертивности.</span>" :
+                 "<span class='unconfident'>⚠️ Надо тренироваться! Слишком часто уступали манипуляциям.</span>";
+    optionsDiv.appendChild(msg);
+    return;
+  }
   
   scene.options.forEach((opt, idx) => {
     const div = document.createElement("div");
@@ -77,32 +113,26 @@ function showScene() {
   document.getElementById("next-btn").style.display = "none";
 }
 
-function selectOption(idx) {
-  const scene = scenes[current];
+function selectOption(idx){
+  const scene = scenes[currentSceneKey];
   document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
   document.querySelectorAll(".option")[idx].classList.add("selected");
   
+  confidence += scene.options[idx].change;
+  if(confidence > 10) confidence = 10;
+  if(confidence < 0) confidence = 0;
+  
   document.getElementById("feedback").style.display = "block";
   document.getElementById("feedback").textContent = scene.options[idx].feedback;
+  document.getElementById("confidence").textContent = confidence;
   
-  score += scene.options[idx].score;
-  document.getElementById("score").textContent = score;
+  currentSceneKey = scene.options[idx].next;
   document.getElementById("next-btn").style.display = "inline-block";
   
-  document.getElementById("progress").style.width = `${((current+1)/scenes.length)*100}%`;
+  document.getElementById("progress").style.width = `${(confidence/10)*100}%`;
 }
 
-function nextScene() {
-  current++;
-  if(current >= scenes.length){
-    document.getElementById("scene-title").textContent = "დასკვნა";
-    document.getElementById("scene-text").textContent = `თქვენ დააგროვეთ ${score} ქულა ${scenes.length*2}-დან.`;
-    document.getElementById("options").innerHTML = "";
-    document.getElementById("feedback").style.display = "none";
-    document.getElementById("next-btn").style.display = "none";
-    document.getElementById("progress").style.width = "100%";
-    return;
-  }
+function nextScene(){
   showScene();
 }
 
