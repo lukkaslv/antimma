@@ -1,428 +1,112 @@
 <!DOCTYPE html>
 <html lang="ka">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>მანიპულაციების წინააღმდეგ ტრენაჟორი</title>
-  <style>
-    body {
-      font-family: 'Fira Sans', 'Noto Sans Georgian', sans-serif;
-      background: #f0f8ff;
-      padding: 20px;
-      color: #2c3e50;
-      line-height: 1.6;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .scene {
-      display: none;
-      animation: fadeIn 0.5s;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .scene.active {
-      display: block;
-    }
-    h2 {
-      color: #3498db;
-      border-bottom: 2px solid #3498db;
-      padding-bottom: 10px;
-    }
-    .options {
-      margin: 25px 0;
-    }
-    .option {
-      padding: 12px;
-      margin: 10px 0;
-      background: #ecf0f1;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .option:hover {
-      background: #d6eaf8;
-      transform: translateX(5px);
-    }
-    .selected {
-      background: #3498db;
-      color: white;
-    }
-    .feedback {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 8px;
-      display: none;
-    }
-    .correct {
-      background: #d5f5e3;
-      border-left: 5px solid #2ecc71;
-    }
-    .incorrect {
-      background: #fadbd8;
-      border-left: 5px solid #e74c3c;
-    }
-    .progress-bar {
-      height: 10px;
-      background: #ecf0f1;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
-    .progress {
-      height: 100%;
-      background: #3498db;
-      width: 0%;
-      transition: width 0.5s;
-    }
-    .stats {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .btn {
-      padding: 12px 25px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.3s;
-    }
-    .btn:hover {
-      background: #2980b9;
-      transform: translateY(-2px);
-    }
-    .btn:disabled {
-      background: #bdc3c7;
-      cursor: not-allowed;
-    }
-    .motivation {
-      background: #fffacd;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
-      border-left: 5px solid #ffd700;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>მანიპულაციების წინააღმდეგ ტრენაჟორი</title>
+<style>
+body { font-family:sans-serif; background:#f0f8ff; padding:20px; color:#2c3e50; }
+.container { max-width:600px; margin:0 auto; background:white; padding:20px; border-radius:15px; }
+.option { padding:10px; margin:8px 0; background:#ecf0f1; border-radius:8px; cursor:pointer; transition:0.3s; }
+.option:hover { background:#d6eaf8; }
+.selected { background:#3498db; color:white; }
+.feedback { margin-top:15px; padding:10px; border-radius:8px; display:none; }
+.correct { background:#d5f5e3; border-left:5px solid #2ecc71; }
+.incorrect { background:#fadbd8; border-left:5px solid #e74c3c; }
+.progress-bar { height:10px; background:#ecf0f1; border-radius:5px; margin-bottom:15px; overflow:hidden; }
+.progress { height:100%; background:#3498db; width:0%; transition:width 0.5s; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="progress-bar">
-      <div class="progress" id="progress"></div>
-    </div>
-    
-    <div class="stats">
-      <div>სცენა: <span id="current-scene">1</span>/10</div>
-      <div>ქულა: <span id="score">0</span></div>
-    </div>
+<div class="container">
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+  <div>სცენა: <span id="current-scene">1</span>/<span id="total-scenes">0</span></div>
+  <div>ქულა: <span id="score">0</span></div>
+  <h2 id="scene-title"></h2>
+  <p id="scene-text"></p>
+  <div id="options" class="options"></div>
+  <div id="feedback" class="feedback"></div>
+  <button id="next-btn" onclick="nextScene()" style="display:none;">შემდეგი</button>
+</div>
 
-    <!-- სცენა 1 -->
-    <div id="scene1" class="scene active">
-      <h2>ოჯახური ვახშამი</h2>
-      <p>დედა გეუბნება: "თუ კვირას არ მოხვალ, წნევა მეწვება!" რას გააკეთებ?</p>
-      
-      <div class="options">
-        <div class="option" onclick="selectOption(1, 1)">დაუყოვნებლივ დაპირდები, რომ მოხვალ</div>
-        <div class="option" onclick="selectOption(1, 2)">პასუხობ: "დედა, მიყვარხარ, მაგრამ სხვა დღეს შევხვდეთ"</div>
-        <div class="option" onclick="selectOption(1, 3)">ეუბნები: "ეს მანიპულაციაა, მოვალ როცა შემეძლება"</div>
-      </div>
-      
-      <div id="feedback1" class="feedback">
-        <p id="feedback-text1"></p>
-        <button class="btn" onclick="nextScene(2)">შემდეგი</button>
-      </div>
-    </div>
+<script>
+const scenes = [
+  {
+    title: "ოჯახური ვახშამი",
+    text: "დედა გეუბნება: 'თუ კვირას არ მოხვალ, წნევა მეწვება!' რას გააკეთებ?",
+    options: [
+      {text:"დაუყოვნებლივ დაპირდები", score:0, feedback:"❌ მანიპულაცია გაიგრძელება."},
+      {text:"პასუხობ: 'დედა, მიყვარხარ, მაგრამ სხვა დღეს შევხვდეთ'", score:2, feedback:"✅ სწორად! საზღვრები შენარჩუნებულია."},
+      {text:"ეუბნები: 'ეს მანიპულაციაა, მოვალ როცა შემეძლება'", score:1, feedback:"⚠️ სიმართლეა, მაგრამ შესაძლოა უხეში ჟღერდეს."}
+    ]
+  },
+  {
+    title: "სამუშაო სიტუაცია",
+    text: "კოლეგა ამბობს: 'შენ გუნდური მოთამაშე ხარ? მაშინ სამუშაოს შემდეგ დარჩები!' რას უპასუხებ?",
+    options: [
+      {text:"მშვიდად დათანხმდები", score:0, feedback:"❌ ხელი შეუწყობთ მანიპულაციას."},
+      {text:"გუნდურობა ორმხრივი უნდა იყოს. მოდი განვიხილოთ ვადები", score:2, feedback:"✅ შესანიშნავი! გამოხატეთ თანამშრომლობა."},
+      {text:"ეს მანიპულაციაა, დროზე დავდივარ", score:1, feedback:"⚠️ სწორი, მაგრამ შეიძლება უფრო კონსტრუქციულად."}
+    ]
+  }
+  // можно добавить остальные сцены сюда
+];
 
-    <!-- სცენა 2 -->
-    <div id="scene2" class="scene">
-      <h2>სამუშაო სიტუაცია</h2>
-      <p>კოლეგა ამბობს: "შენ გუნდური მოთამაშე ხარ? მაშინ სამუშაოს შემდეგ დარჩები!" რას უპასუხებ?</p>
-      
-      <div class="options">
-        <div class="option" onclick="selectOption(2, 1)">მშვიდად დათანხმდები</div>
-        <div class="option" onclick="selectOption(2, 2)">"გუნდურობა ორმხრივი უნდა იყოს. მოდი განვიხილოთ ვადები"</div>
-        <div class="option" onclick="selectOption(2, 3)">"ეს მანიპულაციაა, დროზე დავდივარ"</div>
-      </div>
-      
-      <div id="feedback2" class="feedback">
-        <p id="feedback-text2"></p>
-        <button class="btn" onclick="nextScene(3)">შემდეგი</button>
-      </div>
-    </div>
+let current = 0;
+let score = 0;
 
-    <!-- სცენა 3 -->
-    <div id="scene3" class="scene">
-      <h2>რომანტიკული ურთიერთობა</h2>
-      <p>პარტნიორი გეუბნება: "თუ ნამდვილად მიყვარხარ, 1000 ლარს მათხოვებ". როგორ უპასუხებ?</p>
-      
-      <div class="options">
-        <div class="option" onclick="selectOption(3, 1)">ფულს მისცემ, რომ არ დააწყენინო</div>
-        <div class="option" onclick="selectOption(3, 2)">"სიყვარული ფულით არ იზომება. მოდი განვიხილოთ შენი სიტუაცია"</div>
-        <div class="option" onclick="selectOption(3, 3)">"ეს შანტაჟია, ფულს არ მოგცემ"</div>
-      </div>
-      
-      <div id="feedback3" class="feedback">
-        <p id="feedback-text3"></p>
-        <button class="btn" onclick="nextScene(4)">შემდეგი</button>
-      </div>
-    </div>
+document.getElementById("total-scenes").textContent = scenes.length;
 
-    <!-- სცენა 4 -->
-    <div id="scene4" class="scene">
-      <h2>მეგობრული ურთიერთობა</h2>
-      <p>მეგობარი გეუბნება: "არ გინდა რომ ვიწუნო? მაშინ ეს საქმე შენ გააკეთე!" რას მოიმოქმედებ?</p>
-      
-      <div class="options">
-        <div class="option" onclick="selectOption(4, 1)">მის მოვალეობებს იტვირთავ</div>
-        <div class="option" onclick="selectOption(4, 2)">"რჩევას მოგცემ, მაგრამ საქმე შენ გააკეთე"</div>
-        <div class="option" onclick="selectOption(4, 3)">"ჩემით მანიპულირებას ცდილობ"</div>
-      </div>
-      
-      <div id="feedback4" class="feedback">
-        <p id="feedback-text4"></p>
-        <button class="btn" onclick="nextScene(5)">შემდეგი</button>
-      </div>
-    </div>
+function showScene() {
+  const scene = scenes[current];
+  document.getElementById("scene-title").textContent = scene.title;
+  document.getElementById("scene-text").textContent = scene.text;
+  
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  
+  scene.options.forEach((opt, idx) => {
+    const div = document.createElement("div");
+    div.className = "option";
+    div.textContent = opt.text;
+    div.onclick = () => selectOption(idx);
+    optionsDiv.appendChild(div);
+  });
+  
+  document.getElementById("feedback").style.display = "none";
+  document.getElementById("next-btn").style.display = "none";
+}
 
-    <!-- სცენა 5 -->
-    <div id="scene5" class="scene">
-      <h2>მეზობლის მოთხოვნა</h2>
-      <p>მეზობელი ამბობს: "შენ კეთილი ადამიანი ხარ, ამიტომ ჩემი შვილი შენთან ერთად სკოლაში წავა". რას უთხრათ?</p>
-      
-      <div class="options">
-        <div class="option" onclick="selectOption(5, 1)">დათანხმდებით</div>
-        <div class="option" onclick="selectOption(5, 2)">"ეს ჩემი პასუხისმგებლობა არ არის, მაგრამ შემთხვევით დაგეხმარები"</div>
-        <div class="option" onclick="selectOption(5, 3)">"არ გამიკეთებინებს მსგავსი მოთხოვნები"</div>
-      </div>
-      
-      <div id="feedback5" class="feedback">
-        <p id="feedback-text5"></p>
-        <button class="btn" onclick="nextScene(6)">შემდეგი</button>
-      </div>
-    </div>
+function selectOption(idx) {
+  const scene = scenes[current];
+  document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+  document.querySelectorAll(".option")[idx].classList.add("selected");
+  
+  document.getElementById("feedback").style.display = "block";
+  document.getElementById("feedback").textContent = scene.options[idx].feedback;
+  
+  score += scene.options[idx].score;
+  document.getElementById("score").textContent = score;
+  document.getElementById("next-btn").style.display = "inline-block";
+  
+  document.getElementById("progress").style.width = `${((current+1)/scenes.length)*100}%`;
+}
 
-    <!-- სცენა 6 -->
-    <div id="scene6" class="scene">
-      <h2>თანამშრომლის მოთხოვნა</h2>
-      <p>კოლეგა გეუბნება: "შენ უკეთ იცი ეს საქმე, ამიტომ ჩემი ნაწილი შენ გააკეთე". რას უპასუხებთ?</p>
-      
-      <div class="options">
-        <div class="option" onclick="selectOption(6, 1)">მის საქმესაც შეასრულებ</div>
-        <div class="option" onclick="selectOption(6, 2)">"შემიძლია რჩევა მოგცე, მაგრამ საქმე შენ გააკეთე"</div>
-        <div class="option" onclick="selectOption(6, 3)">"ეს არასამართლიანია, ჩვენ თანაბარი ვართ"</div>
-      </div>
-      
-      <div id="feedback6" class="feedback">
-        <p id="feedback-text6"></p>
-        <button class="btn" onclick="nextScene(7)">შემდეგი</button>
-      </div>
-    </div>
+function nextScene() {
+  current++;
+  if(current >= scenes.length){
+    document.getElementById("scene-title").textContent = "დასკვნა";
+    document.getElementById("scene-text").textContent = `თქვენ დააგროვეთ ${score} ქულა ${scenes.length*2}-დან.`;
+    document.getElementById("options").innerHTML = "";
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("next-btn").style.display = "none";
+    document.getElementById("progress").style.width = "100%";
+    return;
+  }
+  showScene();
+}
 
-    <!-- სცენა 7 -->
-    <div id="scene7" class="scene">
-      <h2>პარტნიორის ეჭვიანობა</h2>
-      <p>პარტნიორი გეუბნება: "თუ ნამდვილად მიყვარხარ, აღარ დაურეკავ ამ ადამიანს". როგორ მოიქცევი?</p>
-      
-      <div class="options">
-        <div class="option" onclick="selectOption(7, 1)">დათანხმდები და შეწყვეტ კონტაქტს</div>
-        <div class="option" onclick="selectOption(7, 2)">"ჩემი მეგობრები ჩემი არჩევანია, მაგრამ შენი შეხედულებები მესმის"</div>
-        <div class="option" onclick="selectOption(7, 3)">"ეს კონტროლის მცდელობაა, არ მიშვებ"</div>
-      </div>
-      
-      <div id="feedback7" class="feedback">
-        <p id="feedback-text7"></p>
-        <button class="btn" onclick="nextScene(8)">შემდეგი</button>
-      </div>
-    </div>
-
-    <!-- სცენა 8 -->
-    <div id="scene8" class="scene">
-      <h2>ხელმძღვანელის წნეხი</h2>
-      <p>ბოსი გეუბნება: "რეალური პროფესიონალი ამ სამსახურს ცხოვრებას ართმევს". რას უპასუხებთ?</p>
-      
-      <div class="options">
-        <div class="option" onclick="selectOption(8, 1)">დამატებით საათებზე დათანხმდებით</div>
-        <div class="option" onclick="selectOption(8, 2)">"პროფესიონალიზმი სამუშაო საათებში ხარისხს ნიშნავს, არა რაოდენობას"</div>
-        <div class="option" onclick="selectOption(8, 3)">"ეს არაჰუმანური მოთხოვნაა"</div>
-      </div>
-      
-      <div id="feedback8" class="feedback">
-        <p id="feedback-text8"></p>
-        <button class="btn" onclick="nextScene(9)">შემდეგი</button>
-      </div>
-    </div>
-
-    <!-- სცენა 9 -->
-    <div id="scene9" class="scene">
-      <h2>მეგობრის დამცირება</h2>
-      <p>მეგობარი გეუბნება: "მარტო შენ ხარ ასეთი უხერხული, ყველა დანარჩენი თანახმაა". როგორ რეაგირებ?</p>
-      
-      <div class="options">
-        <div class="option" onclick="selectOption(9, 1)">დათანხმდებით, რომ არ გამორჩეულიყავით</div>
-        <div class="option" onclick="selectOption(9, 2)">"ჩემი აზრი განსხვავებულია და ეს ნორმალურია"</div>
-        <div class="option" onclick="selectOption(9, 3)">"ჩემთან მსგავსი მანიპულაციები არ იმუშავებს"</div>
-      </div>
-      
-      <div id="feedback9" class="feedback">
-        <p id="feedback-text9"></p>
-        <button class="btn" onclick="nextScene(10)">შემდეგი</button>
-      </div>
-    </div>
-
-    <!-- სცენა 10 -->
-    <div id="scene10" class="scene">
-      <h2>დასკვნა</h2>
-      <p>გილოცავთ! თქვენ დააგროვეთ <span id="final-score">0</span> ქულა 20-დან.</p>
-      <div id="final-feedback"></div>
-      
-      <div class="motivation">
-        <h3>💪 თქვენი პროგრესი შესანიშნავია!</h3>
-        <p>ყოველი სწორი პასუხი - ეს არის თქვენი პირადი საზღვრების გაძლიერება. გახსოვდეთ:</p>
-        <ul>
-          <li>თქვენ გაქვთ უფლება თქვათ "არა" ბოდიშის გარეშე</li>
-          <li>სხვისი ემოციები არ არის თქვენი პასუხისმგებლობა</li>
-          <li>ყოველ დღეს ვარჯიშით უკეთესს გახდებით</li>
-        </ul>
-        <p>გააგრძელეთ თქვენი გზა თავდაჯერებულ ადამიანად!</p>
-      </div>
-      
-      <button class="btn" onclick="restartGame()">თავიდან დაწყება</button>
-    </div>
-  </div>
-
-  <script>
-    let currentScene = 1;
-    let score = 0;
-    const correctAnswers = {
-      1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 
-      6: 2, 7: 2, 8: 2, 9: 2
-    };
-    
-    const feedbacks = {
-      1: {
-        1: "❌ თქვენ დაემორჩილეთ მანიპულაციას. დედა გააგრძელებს ამ მეთოდის გამოყენებას.",
-        2: "✅ სწორად! თქვენ შეინარჩუნეთ საზღვრები კონფლიქტის გარეშე.",
-        3: "⚠️ სიმართლე, მაგრამ შეიძლება უხეშად ჟღერდეს. შეეცადეთ უფრო რბილად ჩამოაყალიბოთ."
-      },
-      2: {
-        1: "❌ თქვენ ხელი შეუწყობთ მანიპულატორის ქცევას.",
-        2: "✅ შესანიშნავი! გამოხატეთ თანამშრომლობის ნამდვილი არსი.",
-        3: "⚠️ სწორია, მაგრამ შეიძლება დაემატოს კონსტრუქციული შეთავაზება."
-      },
-      3: {
-        1: "❌ ეს კლასიკური შანტაჟია სიყვარულის გამოცდის სახით.",
-        2: "✅ შესანიშნავი! გამოყავით ემოციები და მატერიალური საკითხები.",
-        3: "⚠️ სწორი, მაგრამ შეიძლება კონფლიქტი გამოიწვიოს."
-      },
-      4: {
-        1: "❌ მეგობარი გააგრძელებს თქვენზე საქმის გადაცემას.",
-        2: "✅ სწორად! აჩვენეთ მხარდაჭერა, მაგრამ არ აიღეთ პასუხისმგებლობა.",
-        3: "⚠️ ჭეშმარიტი, მაგრამ შეიძლება უფრო დიპლომატიურად ჩამოაყალიბოთ."
-      },
-      5: {
-        1: "❌ თქვენ დათანხმდით არასამართლიან მოთხოვნას.",
-        2: "✅ სწორად! აჩვენეთ სოლიდარობა საკუთარი საზღვრების დაცვით.",
-        3: "⚠️ მართალი ხართ, მაგრამ შეიძლება უფრო მეგობრულად."
-      },
-      6: {
-        1: "❌ თქვენ ხელს უწყობთ არათანაბარ დატვირთვას.",
-        2: "✅ შესანიშნავი! შესთავაზეთ დახმარება თქვენი კომფორტის ფარგლებში.",
-        3: "⚠️ სწორი, მაგრამ შეიძლება უფრო კონსტრუქციულად."
-      },
-      7: {
-        1: "❌ ეს არის კონტროლის მცდელობა თქვენი სოციალური წრის ზემოთ.",
-        2: "✅ იდეალური! დაიცავით თქვენი არჩევანის უფლება მოწყალებით.",
-        3: "⚠️ ჭეშმარიტი, მაგრამ შეიძლება უფრო რბილად."
-      },
-      8: {
-        1: "❌ თქვენ დათანხმდით ტოქსიკურ მოთხოვნას.",
-        2: "✅ შესანიშნავი! გამოხატეთ პროფესიონალიზმის ნამდვილი არსი.",
-        3: "⚠️ მართალი ხართ, მაგრამ შეიძლება უფრო დიპლომატიურად."
-      },
-      9: {
-        1: "❌ თქვენ დაემორჩილეთ ჯგუფური წნეხის მანიპულაციას.",
-        2: "✅ სწორად! დაიცავით თქვენი ინდივიდუალურობა.",
-        3: "⚠️ ჭეშმარიტი, მაგრამ შეიძლება უფრო კონსტრუქციულად."
-      }
-    };
-
-    function selectOption(sceneNum, optionNum) {
-      document.querySelectorAll(`#scene${sceneNum} .option`).forEach(opt => {
-        opt.classList.remove('selected');
-      });
-      
-      event.target.classList.add('selected');
-      
-      const feedbackDiv = document.getElementById(`feedback${sceneNum}`);
-      const feedbackText = document.getElementById(`feedback-text${sceneNum}`);
-      
-      feedbackDiv.style.display = 'block';
-      feedbackText.textContent = feedbacks[sceneNum][optionNum];
-      
-      if (optionNum === correctAnswers[sceneNum]) {
-        feedbackDiv.className = 'feedback correct';
-        score += 2;
-      } else if (optionNum === 3) {
-        feedbackDiv.className = 'feedback correct';
-        score += 1;
-      } else {
-        feedbackDiv.className = 'feedback incorrect';
-      }
-    }
-
-    function nextScene(nextNum) {
-      document.getElementById(`scene${currentScene}`).classList.remove('active');
-      document.getElementById(`scene${nextNum}`).classList.add('active');
-      currentScene = nextNum;
-      
-      document.getElementById('progress').style.width = `${(nextNum-1)*10}%`;
-      document.getElementById('current-scene').textContent = nextNum-1;
-      document.getElementById('score').textContent = score;
-      
-      if (nextNum === 10) {
-        document.getElementById('final-score').textContent = score;
-        let finalFeedback = '';
-        if (score >= 16) {
-          finalFeedback = '<p>🎉 ბრწყინვალე შედეგი! თქვენ მშვენივრად ამოიცნობთ მანიპულაციებს და იცავთ საკუთარ საზღვრებს.</p>';
-        } else if (score >= 10) {
-          finalFeedback = '<p>👍 კარგი შედეგი! თქვენ ხვდებით მანიპულაციებს, მაგრამ ზოგჯერ უნდა ივარჯიშოთ პასუხებში.</p>';
-        } else {
-          finalFeedback = '<p>💡 არის სადავარჯიშო! ყურადღება მიაქციეთ ასერტიული კომუნიკაციის ტექნიკას.</p>';
-        }
-        document.getElementById('final-feedback').innerHTML = finalFeedback;
-      }
-    }
-
-    function restartGame() {
-      currentScene = 1;
-      score = 0;
-      document.getElementById('progress').style.width = '0%';
-      document.getElementById('current-scene').textContent = '1';
-      document.getElementById('score').textContent = '0';
-      
-      document.querySelectorAll('.scene').forEach(scene => {
-        scene.classList.remove('active');
-        const feedback = scene.querySelector('.feedback');
-        if (feedback) {
-          feedback.style.display = 'none';
-          feedback.className = 'feedback';
-        }
-        scene.querySelectorAll('.option').forEach(opt => {
-          opt.classList.remove('selected');
-        });
-      });
-      
-      document.getElementById('scene1').classList.add('active');
-    }
-  </script>
+showScene();
+</script>
 </body>
 </html>
