@@ -3,43 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>მანიპულაციების წინააღმდეგ ინტერაქტიული ტრენაჟორი</title>
+<title>მანიპულაციების წინააღმდეგ გეიმიფიცირებული ტრენაჟორი</title>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body {
-  font-family: 'Fira Sans', sans-serif;
-  background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
-  margin: 0; padding: 0;
-  display: flex; justify-content: center; align-items: flex-start;
-  min-height: 100vh;
+  margin:0; padding:0;
+  font-family:'Fira Sans', sans-serif;
+  background: linear-gradient(135deg,#89f7fe,#66a6ff);
+  display:flex; justify-content:center; align-items:flex-start;
+  min-height:100vh;
 }
+
 .container {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  padding: 30px;
-  margin: 40px 20px;
+  width: 90%;
   max-width: 700px;
-  width: 100%;
-  animation: fadeIn 0.6s;
+  margin: 50px 0;
+  background: #ffffffee;
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  padding: 30px;
+  overflow: hidden;
+  position: relative;
 }
-@keyframes fadeIn { from {opacity:0} to {opacity:1} }
 
-h2 { color:#3498db; margin-top:0; }
-p { font-size: 1.1rem; line-height:1.5; }
+.scene {
+  display: none;
+  animation: fadeIn 0.6s ease;
+}
 
-.options { margin:20px 0; }
+.scene.active { display:block; }
+
+@keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+
+h2 {
+  color:#3498db;
+  margin-top:0;
+  font-size:1.8rem;
+  border-bottom: 2px solid #3498db;
+  padding-bottom:10px;
+}
+
+p { font-size:1.1rem; margin:15px 0; }
+
+.options { margin:20px 0; display:flex; flex-direction:column; gap:12px; }
+
 .option {
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #ecf0f1, #d6eaf8);
-  cursor: pointer;
-  transition: all 0.3s;
+  padding:15px;
+  border-radius:12px;
+  background: linear-gradient(135deg,#ecf0f1,#d6eaf8);
+  cursor:pointer;
   font-weight:600;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
-.option:hover { transform: translateX(5px); background: linear-gradient(135deg,#d0e7fa,#a0d4fb);}
-.selected { background: #3498db; color:white; }
+.option:hover { transform: translateX(8px) scale(1.02); background: linear-gradient(135deg,#a1c4fd,#c2e9fb); }
+
+.selected { background:#3498db; color:white; }
 
 .feedback {
   padding: 15px;
@@ -47,109 +66,155 @@ p { font-size: 1.1rem; line-height:1.5; }
   margin-top: 15px;
   font-weight:600;
   display:none;
-  animation: fadeIn 0.5s;
+  animation: fadeIn 0.4s ease;
 }
-.confident { color:green; }
-.unconfident { color:red; }
+
+.correct { color:#27ae60; }
+.incorrect { color:#c0392b; }
+
 .progress-bar {
   height: 15px;
+  width:100%;
   background: #ecf0f1;
   border-radius: 10px;
   overflow: hidden;
-  margin-bottom: 15px;
+  margin-bottom:20px;
 }
 .progress {
-  height: 100%;
+  height:100%;
   width:0%;
   background: linear-gradient(90deg,#3498db,#2ecc71);
   transition: width 0.5s;
+  border-radius:10px;
 }
 
 #next-btn {
-  padding: 12px 25px;
-  background: linear-gradient(135deg,#3498db,#2ecc71);
-  color:white;
+  padding:12px 25px;
+  font-size:1rem;
+  font-weight:600;
   border:none;
   border-radius:12px;
-  font-weight:600;
   cursor:pointer;
+  background: linear-gradient(135deg,#3498db,#2ecc71);
+  color:white;
+  margin-top:15px;
   transition:0.3s;
 }
-#next-btn:hover { transform: translateY(-3px); opacity:0.9;}
+#next-btn:hover { transform: translateY(-3px); opacity:0.9; }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="progress-bar"><div class="progress" id="progress"></div></div>
-  <div>💪 Очки уверенности: <span id="confidence">5</span>/10</div>
-  <h2 id="scene-title"></h2>
-  <p id="scene-text"></p>
-  <div id="options" class="options"></div>
-  <div id="feedback" class="feedback"></div>
+  <div style="margin-bottom:10px;">💪 Очки уверенности: <span id="score">0</span></div>
+
+  <div id="scenes-container">
+    <!-- сцены генерируются JS -->
+  </div>
+
   <button id="next-btn" onclick="nextScene()" style="display:none;">➡ შემდეგი</button>
 </div>
 
 <script>
-let confidence = 5;
-let currentSceneKey = 'start';
-
-const scenes = {
-  start: {
-    text: "🎉 Друзья зовут тебя на вечеринку, но у тебя планы. Что сделаешь?",
-    options: [
-      { text: "Пойду на вечеринку 🕺", next: "regret", change: -1, feedback: "❌ Вы потеряли немного уверенности." },
-      { text: "Откажусь вежливо 🙅‍♂️", next: "confident", change: +2, feedback: "✅ Отлично! Вы сохранили свои границы." }
+const scenesData = [
+  {
+    title:"🏠 Семья",
+    text:"Дедушка говорит: 'Если не придёшь на ужин, мне будет обидно!' Как поступите?",
+    options:[
+      {text:"Сразу согласиться 😅", score:0, feedback:"❌ Вы уступили манипуляции."},
+      {text:"Сказать: 'Я люблю вас, но приду в другое время' 😊", score:2, feedback:"✅ Отлично! Границы сохранены."},
+      {text:"'Это манипуляция, приду когда смогу' 😎", score:1, feedback:"⚠️ Верно, но может прозвучать грубо."}
     ]
   },
-  regret: {
-    text: "😓 Вы чувствуете усталость и раздражение. Следующая ситуация:",
-    options: [
-      { text: "Согласиться на просьбу коллеги 👎", next: "overworked", change: -1, feedback: "❌ Вы позволили давлению влиять на себя." },
-      { text: "Вежливо отказаться 👍", next: "confident2", change: +1, feedback: "✅ Хорошо! Вы защищаете своё время." }
+  {
+    title:"💼 Работа",
+    text:"Коллега: 'Ты командный игрок? Тогда оставайся после работы!' Что отвечаете?",
+    options:[
+      {text:"Согласиться без обсуждения 😬", score:0, feedback:"❌ Манипуляция сработала."},
+      {text:"'Командность — это взаимно, обсудим сроки' 👍", score:2, feedback:"✅ Отлично! Вы ассертивны."},
+      {text:"'Это манипуляция, я ухожу вовремя' 😎", score:1, feedback:"⚠️ Верно, можно добавить конструктив."}
     ]
   },
-  confident: {
-    text: "😎 Вы уверенно сохранили свои границы. Следующая ситуация:",
-    options: [
-      { text: "Игнорировать просьбу друга 😐", next: "conflict", change: -1, feedback: "⚠️ Игнорирование может вызвать недовольство." },
-      { text: "Предложить альтернативу 💡", next: "confident2", change: +2, feedback: "✅ Отлично! Вы действуете ассертивно." }
+  {
+    title:"💖 Отношения",
+    text:"Партнёр говорит: 'Если любишь, дай 1000₾' — что делаете?",
+    options:[
+      {text:"Дать деньги 😬", score:0, feedback:"❌ Классический шантаж."},
+      {text:"Обсудить ситуацию 💡", score:2, feedback:"✅ Отлично! Разделяете чувства и материальное."},
+      {text:"'Это шантаж, не дам' 😎", score:1, feedback:"⚠️ Верно, но может быть конфликт."}
     ]
-  },
-  overworked: {
-    text: "📚 Вы перегружены работой, но коллега снова просит помощи.",
-    options: [
-      { text: "Согласиться 😩", next: "end", change: -2, feedback: "❌ Вы слишком уступчивы." },
-      { text: "Отказать и предложить помощь позже ⏰", next: "end", change: +2, feedback: "✅ Вы нашли баланс." }
-    ]
-  },
-  confident2: {
-    text: "💰 Партнер требует деньги под предлогом 'любви'.",
-    options: [
-      { text: "Отдать деньги 😬", next: "end", change: -2, feedback: "❌ Манипуляция сработала." },
-      { text: "Обсудить ситуацию 🗣️", next: "end", change: +2, feedback: "✅ Отлично! Вы различаете манипуляцию и искренние просьбы." }
-    ]
-  },
-  conflict: {
-    text: "😤 Друг расстроен из-за отказа.",
-    options: [
-      { text: "Извиниться и уступить 🙁", next: "end", change: -1, feedback: "❌ Вы снова уступили давлению." },
-      { text: "Объяснить свою позицию спокойно ✌️", next: "end", change: +2, feedback: "✅ Отлично! Вы сохраняете границы и дружбу." }
-    ]
-  },
-  end: {
-    text: "🏁 Игра завершена! Посмотрим, как вы справились:",
-    options: []
   }
-};
+];
 
-function showScene() {
-  const scene = scenes[currentSceneKey];
-  document.getElementById("scene-title").textContent = currentSceneKey==='end'?"Конец":"Ситуация";
-  document.getElementById("scene-text").textContent = scene.text;
+let currentIndex = 0;
+let totalScore = 0;
 
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
+function renderScene(){
+  const container = document.getElementById("scenes-container");
+  container.innerHTML = "";
+  const scene = scenesData[currentIndex];
 
-  if(scene.options.length===0){
-    document.getElementById("feedback").style.display="none";
-    document.getElementById("next-btn").style.displ
+  const div = document.createElement("div");
+  div.className="scene active";
+
+  const h2 = document.createElement("h2");
+  h2.textContent = scene.title;
+  div.appendChild(h2);
+
+  const p = document.createElement("p");
+  p.textContent = scene.text;
+  div.appendChild(p);
+
+  const optionsDiv = document.createElement("div");
+  optionsDiv.className="options";
+
+  scene.options.forEach((opt, idx)=>{
+    const optDiv = document.createElement("div");
+    optDiv.className="option";
+    optDiv.textContent=opt.text;
+    optDiv.onclick=()=>{
+      document.querySelectorAll(".option").forEach(o=>o.classList.remove("selected"));
+      optDiv.classList.add("selected");
+      totalScore += opt.score;
+      const fb = document.getElementById("feedback");
+      fb.style.display="block";
+      fb.textContent=opt.feedback;
+      if(opt.score===2) fb.className="feedback correct";
+      else if(opt.score===1) fb.className="feedback incorrect";
+      else fb.className="feedback incorrect";
+      document.getElementById("score").textContent = totalScore;
+      document.getElementById("next-btn").style.display="inline-block";
+      document.getElementById("progress").style.width = `${((currentIndex+1)/scenesData.length)*100}%`;
+    };
+    optionsDiv.appendChild(optDiv);
+  });
+
+  div.appendChild(optionsDiv);
+  const feedbackDiv = document.createElement("div");
+  feedbackDiv.id="feedback";
+  feedbackDiv.className="feedback";
+  div.appendChild(feedbackDiv);
+
+  container.appendChild(div);
+  document.getElementById("next-btn").style.display="none";
+}
+
+function nextScene(){
+  currentIndex++;
+  if(currentIndex>=scenesData.length){
+    // конец игры
+    const container = document.getElementById("scenes-container");
+    container.innerHTML = `<h2>🏁 Игра завершена!</h2>
+      <p>Вы набрали ${totalScore} очков.</p>
+      <p>${totalScore>=4?"💪 Отлично! Вы уверенно защищали границы.":"⚠️ Надо тренироваться, манипуляции иногда срабатывают."}</p>`;
+    document.getElementById("next-btn").style.display="none";
+    document.getElementById("progress").style.width="100%";
+    return;
+  }
+  renderScene();
+}
+
+renderScene();
+</script>
+</body>
+</html>
